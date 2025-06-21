@@ -21,17 +21,60 @@
 			remoteGlobalIDString = 7E57F7F92D91806700522702;
 			remoteInfo = Kineo;
 		};
+		7ECEEEC62DFDA414009EDDBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E57F7F22D91806700522702 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7ECEEEB82DFDA413009EDDBB;
+			remoteInfo = "Kineo Watch App";
+		};
+		7ECEEED02DFDA414009EDDBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E57F7F22D91806700522702 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7ECEEEB82DFDA413009EDDBB;
+			remoteInfo = "Kineo Watch App";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7ECEEE292DFDA2FF009EDDBB /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7E57F7FA2D91806700522702 /* Kineo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kineo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E57F80A2D91806800522702 /* KineoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KineoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E57F8142D91806800522702 /* KineoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KineoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7ECEEEB92DFDA413009EDDBB /* Kineo Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kineo Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7ECEEEC52DFDA414009EDDBB /* Kineo Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kineo Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7ECEEECF2DFDA414009EDDBB /* Kineo Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kineo Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7ECEEEF12DFDAAEC009EDDBB /* Exceptions for "Kineo" folder in "Kineo Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Shared/Models/MotionData.swift,
+			);
+			target = 7ECEEEB82DFDA413009EDDBB /* Kineo Watch App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7E57F7FC2D91806700522702 /* Kineo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7ECEEEF12DFDAAEC009EDDBB /* Exceptions for "Kineo" folder in "Kineo Watch App" target */,
+			);
 			path = Kineo;
 			sourceTree = "<group>";
 		};
@@ -43,6 +86,21 @@
 		7E57F8172D91806800522702 /* KineoUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = KineoUITests;
+			sourceTree = "<group>";
+		};
+		7ECEEEBA2DFDA413009EDDBB /* Kineo Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kineo Watch App";
+			sourceTree = "<group>";
+		};
+		7ECEEEC82DFDA414009EDDBB /* Kineo Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kineo Watch AppTests";
+			sourceTree = "<group>";
+		};
+		7ECEEED22DFDA414009EDDBB /* Kineo Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kineo Watch AppUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,6 +127,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7ECEEEB62DFDA413009EDDBB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ECEEEC22DFDA414009EDDBB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ECEEECC2DFDA414009EDDBB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +157,9 @@
 				7E57F7FC2D91806700522702 /* Kineo */,
 				7E57F80D2D91806800522702 /* KineoTests */,
 				7E57F8172D91806800522702 /* KineoUITests */,
+				7ECEEEBA2DFDA413009EDDBB /* Kineo Watch App */,
+				7ECEEEC82DFDA414009EDDBB /* Kineo Watch AppTests */,
+				7ECEEED22DFDA414009EDDBB /* Kineo Watch AppUITests */,
 				7E57F7FB2D91806700522702 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,6 +170,9 @@
 				7E57F7FA2D91806700522702 /* Kineo.app */,
 				7E57F80A2D91806800522702 /* KineoTests.xctest */,
 				7E57F8142D91806800522702 /* KineoUITests.xctest */,
+				7ECEEEB92DFDA413009EDDBB /* Kineo Watch App.app */,
+				7ECEEEC52DFDA414009EDDBB /* Kineo Watch AppTests.xctest */,
+				7ECEEECF2DFDA414009EDDBB /* Kineo Watch AppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,6 +187,7 @@
 				7E57F7F62D91806700522702 /* Sources */,
 				7E57F7F72D91806700522702 /* Frameworks */,
 				7E57F7F82D91806700522702 /* Resources */,
+				7ECEEE292DFDA2FF009EDDBB /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
@@ -163,6 +249,74 @@
 			productReference = 7E57F8142D91806800522702 /* KineoUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		7ECEEEB82DFDA413009EDDBB /* Kineo Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7ECEEED72DFDA414009EDDBB /* Build configuration list for PBXNativeTarget "Kineo Watch App" */;
+			buildPhases = (
+				7ECEEEB52DFDA413009EDDBB /* Sources */,
+				7ECEEEB62DFDA413009EDDBB /* Frameworks */,
+				7ECEEEB72DFDA413009EDDBB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7ECEEEBA2DFDA413009EDDBB /* Kineo Watch App */,
+			);
+			name = "Kineo Watch App";
+			packageProductDependencies = (
+			);
+			productName = "Kineo Watch App";
+			productReference = 7ECEEEB92DFDA413009EDDBB /* Kineo Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7ECEEEC42DFDA414009EDDBB /* Kineo Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7ECEEEDA2DFDA414009EDDBB /* Build configuration list for PBXNativeTarget "Kineo Watch AppTests" */;
+			buildPhases = (
+				7ECEEEC12DFDA414009EDDBB /* Sources */,
+				7ECEEEC22DFDA414009EDDBB /* Frameworks */,
+				7ECEEEC32DFDA414009EDDBB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7ECEEEC72DFDA414009EDDBB /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				7ECEEEC82DFDA414009EDDBB /* Kineo Watch AppTests */,
+			);
+			name = "Kineo Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "Kineo Watch AppTests";
+			productReference = 7ECEEEC52DFDA414009EDDBB /* Kineo Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7ECEEECE2DFDA414009EDDBB /* Kineo Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7ECEEEDD2DFDA414009EDDBB /* Build configuration list for PBXNativeTarget "Kineo Watch AppUITests" */;
+			buildPhases = (
+				7ECEEECB2DFDA414009EDDBB /* Sources */,
+				7ECEEECC2DFDA414009EDDBB /* Frameworks */,
+				7ECEEECD2DFDA414009EDDBB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7ECEEED12DFDA414009EDDBB /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				7ECEEED22DFDA414009EDDBB /* Kineo Watch AppUITests */,
+			);
+			name = "Kineo Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "Kineo Watch AppUITests";
+			productReference = 7ECEEECF2DFDA414009EDDBB /* Kineo Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -170,7 +324,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					7E57F7F92D91806700522702 = {
@@ -183,6 +337,17 @@
 					7E57F8132D91806800522702 = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 7E57F7F92D91806700522702;
+					};
+					7ECEEEB82DFDA413009EDDBB = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					7ECEEEC42DFDA414009EDDBB = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 7ECEEEB82DFDA413009EDDBB;
+					};
+					7ECEEECE2DFDA414009EDDBB = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 7ECEEEB82DFDA413009EDDBB;
 					};
 				};
 			};
@@ -203,6 +368,9 @@
 				7E57F7F92D91806700522702 /* Kineo */,
 				7E57F8092D91806800522702 /* KineoTests */,
 				7E57F8132D91806800522702 /* KineoUITests */,
+				7ECEEEB82DFDA413009EDDBB /* Kineo Watch App */,
+				7ECEEEC42DFDA414009EDDBB /* Kineo Watch AppTests */,
+				7ECEEECE2DFDA414009EDDBB /* Kineo Watch AppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +391,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7E57F8122D91806800522702 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ECEEEB72DFDA413009EDDBB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ECEEEC32DFDA414009EDDBB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ECEEECD2DFDA414009EDDBB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +442,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7ECEEEB52DFDA413009EDDBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ECEEEC12DFDA414009EDDBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ECEEECB2DFDA414009EDDBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +475,16 @@
 			isa = PBXTargetDependency;
 			target = 7E57F7F92D91806700522702 /* Kineo */;
 			targetProxy = 7E57F8152D91806800522702 /* PBXContainerItemProxy */;
+		};
+		7ECEEEC72DFDA414009EDDBB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7ECEEEB82DFDA413009EDDBB /* Kineo Watch App */;
+			targetProxy = 7ECEEEC62DFDA414009EDDBB /* PBXContainerItemProxy */;
+		};
+		7ECEEED12DFDA414009EDDBB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7ECEEEB82DFDA413009EDDBB /* Kineo Watch App */;
+			targetProxy = 7ECEEED02DFDA414009EDDBB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -393,9 +613,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Kineo/Preview Content\"";
+				DEVELOPMENT_TEAM = BWFZ2LZ5ZN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -408,8 +630,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "huitang.fcn-yahoo.com.Kineo";
+				PRODUCT_BUNDLE_IDENTIFIER = Kineo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -421,9 +644,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Kineo/Preview Content\"";
+				DEVELOPMENT_TEAM = BWFZ2LZ5ZN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -438,6 +663,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "huitang.fcn-yahoo.com.Kineo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -512,6 +738,137 @@
 			};
 			name = Release;
 		};
+		7ECEEED82DFDA414009EDDBB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BWFZ2LZ5ZN;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Kineo;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = watchKineo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		7ECEEED92DFDA414009EDDBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Kineo;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = .watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
+		7ECEEEDB2DFDA414009EDDBB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.matsunomi.Kineo.Kineo-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kineo Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kineo Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		7ECEEEDC2DFDA414009EDDBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.matsunomi.Kineo.Kineo-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kineo Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kineo Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
+		7ECEEEDE2DFDA414009EDDBB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.matsunomi.Kineo.Kineo-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "Kineo Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		7ECEEEDF2DFDA414009EDDBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.matsunomi.Kineo.Kineo-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "Kineo Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -547,6 +904,33 @@
 			buildConfigurations = (
 				7E57F8252D91806800522702 /* Debug */,
 				7E57F8262D91806800522702 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7ECEEED72DFDA414009EDDBB /* Build configuration list for PBXNativeTarget "Kineo Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7ECEEED82DFDA414009EDDBB /* Debug */,
+				7ECEEED92DFDA414009EDDBB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7ECEEEDA2DFDA414009EDDBB /* Build configuration list for PBXNativeTarget "Kineo Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7ECEEEDB2DFDA414009EDDBB /* Debug */,
+				7ECEEEDC2DFDA414009EDDBB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7ECEEEDD2DFDA414009EDDBB /* Build configuration list for PBXNativeTarget "Kineo Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7ECEEEDE2DFDA414009EDDBB /* Debug */,
+				7ECEEEDF2DFDA414009EDDBB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

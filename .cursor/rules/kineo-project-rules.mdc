@@ -1,0 +1,106 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Kineo Project Rules
+
+These rules define the architecture, structure, and coding standards for the Kineo iOS + watchOS app.
+
+---
+
+## 1. Architectural Principles
+
+- Use **SwiftUI + MVVM** pattern throughout.
+- Strict separation of **Views**, **ViewModels**, **Services**, and **Models**.
+- Keep all UI logic inside `Views/`, business logic in `ViewModels/` and `Services/`.
+- Views should remain thin and reactive only.
+
+---
+
+## 2. Directory Structure
+
+Organize code by responsibility and platform:
+
+```
+Kineo/
+├── Models/            // Domain data structures (e.g., MotionData)
+├── ViewModels/        // App logic and data binding
+├── Views/             // SwiftUI screens and components
+├── Services/          // CoreMotion, networking, data services
+├── Shared/            // Shared code for iOS & watchOS
+├── Previews/          // Mock data & helpers for SwiftUI previews
+├── WatchApp/          // watchOS-specific Views, ViewModels, Services
+├── Tests/             // iOS Unit Tests
+└── WatchTests/        // watchOS Unit Tests
+```
+
+---
+
+## 3. Code Style & Practices
+
+- Use `@StateObject` or `@ObservedObject` for ViewModel binding.
+- All `ViewModels` should be testable with dependency injection.
+- `Models` should conform to `Identifiable` and `Codable` where appropriate.
+- Avoid logic inside SwiftUI views — delegate to `ViewModel` or `Service`.
+- Services (e.g., MotionManager) must isolate external APIs like CoreMotion.
+
+---
+
+## 4. Previews & Mocks
+
+- Every SwiftUI `View` must include a `.preview` using `.previewDevice(...)`.
+- Preview data must use mock `MotionData` from `Previews/MockMotionData.swift`.
+- Use `#Preview` or `#if DEBUG` guards as needed for safety.
+
+---
+
+## 5. Unit Testing
+
+- Each `Service` and `ViewModel` must have a corresponding unit test file.
+- Place iOS tests in `Tests/`, watchOS tests in `WatchTests/`.
+- Do not access physical device APIs during tests.
+- Prefer mock injection or override methods for testing motion data.
+- Test files must be updated whenever their corresponding implementation changes.
+- Test coverage should include:
+  - Initial state verification
+  - Data flow and transformations
+  - Error handling
+  - Edge cases
+- Use descriptive test names following the pattern: `test[Scenario]_[ExpectedResult]`
+- Group related tests using `// MARK: - [Group Name]` comments
+- Mock implementations should be placed in `Tests/Mocks/` directory
+
+---
+
+## 6. Platform-Specific Handling
+
+- Use `Shared/` for code shared between iOS and watchOS.
+- Do not rely on runtime feature availability — check for hardware (e.g., motion sensors) explicitly.
+- Motion-related services must handle simulator gracefully (e.g., log + no-crash fallback).
+
+---
+
+## 7. Naming Conventions
+
+- Files must reflect their type: `MotionViewModel.swift`, `MotionManager.swift`, `WatchContentView.swift`.
+- Folders must reflect responsibility, not platform (except `WatchApp/` and `Shared/`).
+
+---
+
+## 8. File Restrictions
+
+- Never include `README.md` or `.md` files in Copy Bundle Resources.
+- Do not store dev docs or text files in runtime build folders.
+
+---
+
+## 9. Code Review Checklist
+
+When reviewing code changes, ensure:
+1. All new code has corresponding unit tests
+2. Existing tests are updated to reflect code changes
+3. Tests follow the naming and organization conventions
+4. Mocks are properly implemented and maintained
+5. No physical device APIs are accessed in tests
+6. Test coverage is comprehensive for the changes
