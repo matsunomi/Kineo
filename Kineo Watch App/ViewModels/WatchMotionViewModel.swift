@@ -12,15 +12,16 @@ final class WatchMotionViewModel: ObservableObject {
     
     // MARK: - Private Properties
     private let motionManager: WatchMotionManaging
-    private let connectivitySender: WatchConnectivitySending
+    private let connectivitySender: any WatchConnectivitySending
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Initialization
     init(motionManager: WatchMotionManaging = WatchMotionManager(), 
-         connectivitySender: WatchConnectivitySending = WatchConnectivitySender()) {
+         connectivitySender: any WatchConnectivitySending = WatchConnectivitySender()) {
         self.motionManager = motionManager
         self.connectivitySender = connectivitySender
         setupBindings()
+        setupCommandHandling()
     }
     
     // MARK: - Public Methods
@@ -44,18 +45,9 @@ final class WatchMotionViewModel: ObservableObject {
         guard connectivitySender.isReachable else {
             throw WatchConnectivityError.deviceNotReachable
         }
-        
         let message = ["number": number]
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            connectivitySender.sendMessage(message, replyHandler: { response in
-                print("Watch: 数字发送成功，iPhone 响应: \(response)")
-                continuation.resume()
-            }, errorHandler: { error in
-                print("Watch: 数字发送失败: \(error)")
-                continuation.resume(throwing: error)
-            })
-        }
+        try await connectivitySender.sendMessage(message)
+        print("Watch: 数字发送成功")
     }
     
     // MARK: - Private Methods
@@ -76,7 +68,34 @@ final class WatchMotionViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    private func setupCommandHandling() {
+        // 设置命令处理器
+        if let sender = connectivitySender as? WatchConnectivitySender {
+            sender.setCommandHandler { [weak self] command in
+                self?.handleCommand(command)
+            }
+        }
+    }
+    
+    private func handleCommand(_ command: String) {
+        print("Watch: 处理来自 iPhone 的命令: \(command)")
+        
+        switch command {
+        case "startTracking":
+            print("Watch: 收到开始追踪命令")
+            startUpdates()
+            
+        case "stopTracking":
+            print("Watch: 收到停止追踪命令")
+            stopUpdates()
+            
+        default:
+            print("Watch: 未知命令: \(command)")
+        }
+    }
+    
     private func updateConnectionStatus() {
         isConnected = connectivitySender.isReachable
     }
 } 
+

@@ -26,7 +26,8 @@ final class WatchConnectivitySender: NSObject, WatchConnectivitySending {
     // MARK: - Public Interface
     var isReachable: Bool {
         let reachable = session.isReachable
-        print("Watch: 检查连接状态 - isReachable: \(reachable)")
+        let activationState = session.activationState.rawValue
+        print("Watch: 检查连接状态 - isReachable: \(reachable), 激活状态: \(activationState)")
         return reachable
     }
     
@@ -102,6 +103,7 @@ extension WatchConnectivitySender: WCSessionDelegate {
         } else {
             print("Watch: ✅ WatchConnectivity 激活成功，状态: \(activationState.rawValue)")
             print("Watch: iPhone 可达状态: \(session.isReachable)")
+            print("Watch: 配对状态: \(session.isPaired)")
         }
     }
     

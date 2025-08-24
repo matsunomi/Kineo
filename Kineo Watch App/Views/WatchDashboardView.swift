@@ -39,9 +39,12 @@ struct WatchDashboardView: View {
             // 数字输入
             HStack {
                 TextField("输入数字", text: $inputNumber)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .keyboardType(.numberPad)
+                    .padding(4)
                     .frame(width: 80)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                    )
                 
                 Button("发送") {
                     sendNumber()

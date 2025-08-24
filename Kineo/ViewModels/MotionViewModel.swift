@@ -22,6 +22,8 @@ final class MotionViewModel: ObservableObject {
     init(connectivityReceiver: WatchConnectivityReceiving = WatchConnectivityReceiver()) {
         self.connectivityReceiver = connectivityReceiver
         setupBindings()
+        // 自动启动接收功能
+        startReceiving()
     }
     
     // MARK: - Public Methods
