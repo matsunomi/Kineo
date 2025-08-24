@@ -79,14 +79,23 @@ struct DiagnosticButtonView: View {
                 .font(.headline)
                 .foregroundColor(.secondary)
             
-            Button("🔍 重新检查状态") {
-                // 手动触发状态检查
-                viewModel.startReceiving()
+            HStack(spacing: 12) {
+                Button("🔍 重新检查状态") {
+                    // 手动触发状态检查
+                    viewModel.startReceiving()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                
+                Button("🧪 测试消息接收") {
+                    // 测试消息接收功能
+                    viewModel.testMessageReception()
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
             
-            Text("点击此按钮重新检查 Watch 连接状态")
+            Text("左侧：重新检查状态 | 右侧：测试消息接收")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

@@ -62,6 +62,28 @@ final class MotionViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Test Methods
+    func testMessageReception() {
+        print("iPhone: 🧪 开始测试消息接收...")
+        
+        // 检查当前状态
+        let isReachable = connectivityReceiver.isReachable
+        let isPaired = connectivityReceiver.isWatchPaired
+        let isInstalled = connectivityReceiver.isWatchAppInstalled
+        
+        print("iPhone: 🧪 测试状态 - 可达: \(isReachable), 配对: \(isPaired), 安装: \(isInstalled)")
+        
+        // 尝试发送测试命令
+        Task {
+            do {
+                try await connectivityReceiver.sendCommandToWatch("test")
+                print("iPhone: 🧪 测试命令发送成功")
+            } catch {
+                print("iPhone: 🧪 测试命令发送失败: \(error)")
+            }
+        }
+    }
+    
     // MARK: - Private Methods
     private func setupBindings() {
         // 监听来自 Watch 的运动数据

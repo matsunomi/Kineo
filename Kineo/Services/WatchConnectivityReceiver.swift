@@ -23,7 +23,8 @@ final class WatchConnectivityReceiver: NSObject, WatchConnectivityReceiving {
     // MARK: - Public Interface
     var isReachable: Bool {
         let reachable = session.isReachable
-        print("iPhone: 检查连接状态 - isReachable: \(reachable)")
+        let activationState = session.activationState.rawValue
+        print("iPhone: 检查连接状态 - isReachable: \(reachable), 激活状态: \(activationState)")
         return reachable
     }
     
@@ -72,6 +73,9 @@ final class WatchConnectivityReceiver: NSObject, WatchConnectivityReceiving {
         } else {
             print("iPhone: ✅ WatchConnectivity session 已经激活")
         }
+        
+        // 打印当前状态
+        print("iPhone: 当前状态 - 配对: \(session.isPaired), 安装: \(session.isWatchAppInstalled), 可达: \(session.isReachable)")
     }
     
     func stopReceiving() {
@@ -121,6 +125,11 @@ extension WatchConnectivityReceiver: WCSessionDelegate {
             print("iPhone: Watch 配对状态: \(session.isPaired)")
             print("iPhone: Watch 安装状态: \(session.isWatchAppInstalled)")
             print("iPhone: Watch 可达状态: \(session.isReachable)")
+            
+            // 激活成功后，检查状态
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                print("iPhone: 🔍 激活后状态检查 - 配对: \(session.isPaired), 安装: \(session.isWatchAppInstalled), 可达: \(session.isReachable)")
+            }
         }
     }
     
@@ -135,8 +144,14 @@ extension WatchConnectivityReceiver: WCSessionDelegate {
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         print("iPhone: 📨 收到来自 Watch 的消息: \(message)")
+        print("iPhone: 🔍 消息类型: \(message.keys)")
+        
         queue.async { [weak self] in
-            guard let self = self else { return }
+            guard let self = self else { 
+                print("iPhone: ❌ self 已释放")
+                replyHandler(["error": "Self deallocated"])
+                return 
+            }
             
             // 处理运动数据
             if let motionDataData = message["motionData"] as? Data {
@@ -169,7 +184,7 @@ extension WatchConnectivityReceiver: WCSessionDelegate {
                 replyHandler(["success": true, "number": number])
             }
             else {
-                print("iPhone: ❌ 消息格式无效")
+                print("iPhone: ❌ 消息格式无效，消息内容: \(message)")
                 replyHandler(["error": "Invalid message format"])
             }
         }
@@ -178,6 +193,7 @@ extension WatchConnectivityReceiver: WCSessionDelegate {
     // 监听连接状态变化
     func sessionReachabilityDidChange(_ session: WCSession) {
         print("iPhone: 🔄 Watch 连接状态变化: \(session.isReachable ? "可达" : "不可达")")
+        print("iPhone: 🔍 状态变化时 - 配对: \(session.isPaired), 安装: \(session.isWatchAppInstalled)")
     }
 }
 
