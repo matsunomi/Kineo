@@ -10,6 +10,8 @@ final class MotionViewModel: ObservableObject {
     @Published var connectionStatus: ConnectionStatus = .disconnected
     @Published var errorMessage: String?
     @Published var isWatchTracking = false
+    @Published var isWatchPaired = false
+    @Published var isWatchAppInstalled = false
     
     // MARK: - Private Properties
     private let connectivityReceiver: WatchConnectivityReceiving
@@ -86,6 +88,12 @@ final class MotionViewModel: ObservableObject {
         } else if isReceivingData && !isReachable {
             connectionStatus = .disconnected
             errorMessage = "Apple Watch 连接断开"
+        }
+        
+        // 更新 Watch 状态信息
+        if let receiver = connectivityReceiver as? WatchConnectivityReceiver {
+            isWatchPaired = receiver.isWatchPaired
+            isWatchAppInstalled = receiver.isWatchAppInstalled
         }
     }
 }

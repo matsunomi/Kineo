@@ -16,6 +16,9 @@ struct DashboardView: View {
                 // 连接状态指示器
                 ConnectionStatusView(status: viewModel.connectionStatus)
                 
+                // Watch 应用状态检查
+                WatchAppStatusView(viewModel: viewModel)
+                
                 // Watch 控制按钮
                 WatchControlButtonsView(
                     isTracking: viewModel.isWatchTracking,
@@ -47,6 +50,74 @@ struct DashboardView: View {
             .padding()
             .navigationTitle("Kineo")
             .navigationBarTitleDisplayMode(.large)
+        }
+    }
+}
+
+// MARK: - Watch App Status View
+struct WatchAppStatusView: View {
+    @ObservedObject var viewModel: MotionViewModel
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("Apple Watch 应用状态")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            HStack(spacing: 12) {
+                StatusIndicator(
+                    title: "配对状态",
+                    isActive: viewModel.isWatchPaired,
+                    activeColor: .green,
+                    inactiveColor: .red
+                )
+                
+                StatusIndicator(
+                    title: "应用安装",
+                    isActive: viewModel.isWatchAppInstalled,
+                    activeColor: .green,
+                    inactiveColor: .orange
+                )
+                
+                StatusIndicator(
+                    title: "连接状态",
+                    isActive: viewModel.connectionStatus == .connected,
+                    activeColor: .green,
+                    inactiveColor: .red
+                )
+            }
+            
+            if !viewModel.isWatchAppInstalled {
+                Text("⚠️ Watch 应用未安装，请检查部署配置")
+                    .font(.caption)
+                    .foregroundColor(.orange)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        )
+    }
+}
+
+// MARK: - Status Indicator
+struct StatusIndicator: View {
+    let title: String
+    let isActive: Bool
+    let activeColor: Color
+    let inactiveColor: Color
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            Circle()
+                .fill(isActive ? activeColor : inactiveColor)
+                .frame(width: 8, height: 8)
+            
+            Text(title)
+                .font(.caption2)
+                .foregroundColor(.secondary)
         }
     }
 }

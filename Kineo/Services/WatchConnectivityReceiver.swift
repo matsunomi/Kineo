@@ -4,6 +4,8 @@ import Combine
 
 protocol WatchConnectivityReceiving {
     var isReachable: Bool { get }
+    var isWatchPaired: Bool { get }
+    var isWatchAppInstalled: Bool { get }
     var motionDataPublisher: AnyPublisher<MotionData, Never> { get }
     func startReceiving()
     func stopReceiving()
@@ -21,6 +23,18 @@ final class WatchConnectivityReceiver: NSObject, WatchConnectivityReceiving {
         let reachable = session.isReachable
         print("iPhone: 检查连接状态 - isReachable: \(reachable)")
         return reachable
+    }
+    
+    var isWatchPaired: Bool {
+        let paired = session.isPaired
+        print("iPhone: 检查 Watch 配对状态 - isPaired: \(paired)")
+        return paired
+    }
+    
+    var isWatchAppInstalled: Bool {
+        let installed = session.isWatchAppInstalled
+        print("iPhone: 检查 Watch 应用安装状态 - isWatchAppInstalled: \(installed)")
+        return installed
     }
     
     var motionDataPublisher: AnyPublisher<MotionData, Never> {
