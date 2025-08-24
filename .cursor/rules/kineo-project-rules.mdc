@@ -47,7 +47,21 @@ Kineo/
 
 ---
 
-## 4. Previews & Mocks
+## 4. View Structure & Navigation
+
+- `ContentView.swift` is the root entry point and must remain minimal.
+  - Use it only for high-level routing (`TabView`, `NavigationStack`) and shared state binding.
+- Every distinct screen (e.g., Dashboard, Settings, History) must be a separate SwiftUI view file in `Views/`, named clearly:
+  - `DashboardView.swift`
+  - `SwingHistoryView.swift`
+  - `SettingsView.swift`
+- Views with logic must have a corresponding ViewModel in `ViewModels/`.
+- Reusable components (e.g., buttons, charts) should be extracted into smaller views under `Views/`.
+
+---
+
+
+## 5. Previews & Mocks
 
 - Every SwiftUI `View` must include a `.preview` using `.previewDevice(...)`.
 - Preview data must use mock `MotionData` from `Previews/MockMotionData.swift`.
@@ -55,7 +69,7 @@ Kineo/
 
 ---
 
-## 5. Unit Testing
+## 6. Unit Testing
 
 - Each `Service` and `ViewModel` must have a corresponding unit test file.
 - Place iOS tests in `Tests/`, watchOS tests in `WatchTests/`.
@@ -73,7 +87,16 @@ Kineo/
 
 ---
 
-## 6. Platform-Specific Handling
+## 7. UI View Testing Policy
+
+- Each new screen-level SwiftUI View (e.g., `DashboardView`) must include a `PreviewProvider`.
+- Views that contain logic must use a ViewModel and be tested indirectly through the ViewModel tests.
+- Component views (like chart rows or detail cells) should also include previews and be modular.
+- Avoid embedding large conditional logic inside the View body.
+
+---
+
+## 8. Platform-Specific Handling
 
 - Use `Shared/` for code shared between iOS and watchOS.
 - Do not rely on runtime feature availability — check for hardware (e.g., motion sensors) explicitly.
@@ -81,21 +104,21 @@ Kineo/
 
 ---
 
-## 7. Naming Conventions
+## 9. Naming Conventions
 
 - Files must reflect their type: `MotionViewModel.swift`, `MotionManager.swift`, `WatchContentView.swift`.
 - Folders must reflect responsibility, not platform (except `WatchApp/` and `Shared/`).
 
 ---
 
-## 8. File Restrictions
+## 10. File Restrictions
 
 - Never include `README.md` or `.md` files in Copy Bundle Resources.
 - Do not store dev docs or text files in runtime build folders.
 
 ---
 
-## 9. Code Review Checklist
+## 11. Code Review Checklist
 
 When reviewing code changes, ensure:
 1. All new code has corresponding unit tests
@@ -104,3 +127,4 @@ When reviewing code changes, ensure:
 4. Mocks are properly implemented and maintained
 5. No physical device APIs are accessed in tests
 6. Test coverage is comprehensive for the changes
+7. ContentView.swift has not grown beyond routing-level logic

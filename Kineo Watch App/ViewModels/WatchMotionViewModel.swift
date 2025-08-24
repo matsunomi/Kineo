@@ -38,6 +38,9 @@ final class WatchMotionViewModel: ObservableObject {
     private func setupBindings() {
         motionManager.currentMotionDataPublisher
             .receive(on: DispatchQueue.main)
+            // Throttle updates to prevent UI flickering
+            // Update UI at most every 200ms (5Hz) instead of 50Hz
+            .throttle(for: .milliseconds(200), scheduler: DispatchQueue.main, latest: true)
             .sink { [weak self] motionData in
                 self?.motionData = motionData
             }

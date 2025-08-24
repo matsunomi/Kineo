@@ -2,6 +2,7 @@ import XCTest
 import Combine
 @testable import Kineo
 
+@MainActor
 final class MotionViewModelTests: XCTestCase {
     // MARK: - Properties
     var sut: MotionViewModel!

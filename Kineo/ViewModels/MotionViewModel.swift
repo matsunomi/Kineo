@@ -1,23 +1,28 @@
-import SwiftUI
+import Foundation
 import Combine
 
+@MainActor
 final class MotionViewModel: ObservableObject {
-    // MARK: - Properties
+    // MARK: - Published Properties
     @Published private(set) var motionData: MotionData?
     @Published private(set) var isUpdating = false
-    private let motionManager: any MotionManaging
+    @Published private(set) var error: Error?
+    
+    // MARK: - Private Properties
+    private let motionManager: MotionManaging
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Initialization
-    init(motionManager: any MotionManaging = MotionManager()) {
+    init(motionManager: MotionManaging = MotionManager()) {
         self.motionManager = motionManager
         setupBindings()
     }
     
-    // MARK: - Public Methods
+    // MARK: - Public Interface
     func startUpdates() {
         motionManager.startUpdates()
         isUpdating = true
+        error = nil
     }
     
     func stopUpdates() {

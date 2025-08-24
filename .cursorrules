@@ -1,0 +1,121 @@
+# .cursorrules — Kineo (iOS + watchOS)
+# 目的：
+# 1) 默认把核心代码和文档纳入 AI 上下文
+# 2) 排除构建产物/依赖，提升速度与答案聚焦度
+# 3) 为“半自动接受改动/命令执行”预留配置位（见底部注释）
+
+# -----------------------------
+# 上下文（Context）控制
+# -----------------------------
+context:
+  include:
+    - Models/**
+    - ViewModels/**
+    - Views/**
+    - Services/**
+    - Shared/**
+    - Previews/**
+    - WatchApp/**
+    - Tests/**
+    - WatchTests/**
+    - "*.md"
+    - "*.txt"
+    - "*.yaml"
+    - "*.yml"
+    - "*.swift"
+    - "*.mm"
+    - "*.metal"
+    - "*.plist"
+  exclude:
+    - .git/**
+    - .gitignore
+    - .DS_Store
+    - node_modules/**
+    - Pods/**
+    - Carthage/**
+    - DerivedData/**
+    - build/**
+    - .build/**
+    - .swiftpm/**
+    - .xcassets/**            # 大图标资源通常没必要进上下文
+    - **/*.xcuserstate
+    - **/*.xcworkspace/**
+    - **/*.xcodeproj/**
+    - **/*.playground/**
+    - **/*.out
+    - **/*.log
+    - **/*.tmp
+    - **/.env*
+    - **/fastlane/report.xml  # CI/报告类文件不需要
+    - **/Screenshots/**
+    - **/Archives/**
+    - **/Coverage/**
+    - **/Products/**
+    - **/Index.noindex/**
+
+# 可选：限制每次自动纳入的文件数量（避免超长上下文）
+# maxFiles: 400
+
+# -----------------------------
+# 提示词/风格（可选）
+# -----------------------------
+# 让模型默认知道你的工程分层和约束（简短、稳定即可）
+guidelines:
+  - "Use SwiftUI + MVVM. Keep UI logic in Views, business logic in ViewModels/Services."
+  - "Each screen has a paired ViewModel. Shared code in Shared/. Watch-specific code in WatchApp/."
+  - "All new logic must be testable; tests in Tests/ and WatchTests/."
+
+# -----------------------------
+# 文件优先级（可选）
+# -----------------------------
+# 当上下文空间不足时，优先保留这些目录/文件
+prioritize:
+  - ViewModels/**
+  - Services/**
+  - Models/**
+  - Views/**
+
+# -----------------------------
+# 安全/审核策略（占位，见下方注释）
+# -----------------------------
+# NOTE: 以下是“半自动接受改动/命令执行”的建议开关位。
+# 不同 Cursor 版本的键名可能不同，这里先注释，等你确定支持再放开。
+#
+# guardrails:
+#   requireConfirmationFor:
+#     - fileDeletes            # 删除文件必须确认
+#     - dependencyChanges      # 改依赖（Podfile/Package.swift）必须确认
+#     - testSnapshotUpdates    # 更新快照测试必须确认
+#     - scriptsExec            # 执行脚本/命令必须确认
+#   autoApply:
+#     - formatting             # 仅格式化类改动可自动接受
+#     - comments               # 只改注释可自动接受
+#
+# commands:
+#   allow:
+#     - "xcodebuild -showBuildSettings"
+#     - "swift test"
+#     - "fastlane lanes"       # 示例：白名单命令
+#   deny:
+#     - "rm -rf /"             # 黑名单（危险命令）
+#   confirm:
+#     - "pod install"          # 标记需要人工确认的命令
+#     - "bundle exec pod install"
+#     - "fastlane .*"          # 任意 fastlane 都需要确认
+#
+# edits:
+#   # 对特定路径的自动/半自动接受策略（示例）
+#   autoAccept:
+#     - path: "Views/**"
+#       types: ["formatting","renameSymbol"]
+#     - path: "Tests/**"
+#       types: ["generateTestSkeleton"]
+#   requireReview:
+#     - path: "Services/**"
+#       types: ["logicChange"]
+#     - path: "ViewModels/**"
+#       types: ["logicChange","publicAPIChange"]
+
+# -----------------------------
+# 结束
+# -----------------------------
