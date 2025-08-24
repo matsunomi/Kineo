@@ -9,6 +9,7 @@ final class MotionViewModel: ObservableObject {
     @Published var isReceivingData = false
     @Published var connectionStatus: ConnectionStatus = .disconnected
     @Published var errorMessage: String?
+    @Published var isWatchTracking = false
     
     // MARK: - Private Properties
     private let connectivityReceiver: WatchConnectivityReceiving
@@ -30,6 +31,30 @@ final class MotionViewModel: ObservableObject {
     func stopReceiving() {
         isReceivingData = false
         connectionStatus = .disconnected
+    }
+    
+    func startWatchTracking() {
+        Task {
+            do {
+                try await connectivityReceiver.sendCommandToWatch("startTracking")
+                isWatchTracking = true
+                errorMessage = nil
+            } catch {
+                errorMessage = "启动 Watch 追踪失败: \(error.localizedDescription)"
+            }
+        }
+    }
+    
+    func stopWatchTracking() {
+        Task {
+            do {
+                try await connectivityReceiver.sendCommandToWatch("stopTracking")
+                isWatchTracking = false
+                errorMessage = nil
+            } catch {
+                errorMessage = "停止 Watch 追踪失败: \(error.localizedDescription)"
+            }
+        }
     }
     
     // MARK: - Private Methods

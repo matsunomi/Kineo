@@ -18,7 +18,7 @@ struct WatchDashboardView: View {
                     .fill(viewModel.isUpdating ? Color.green : Color.red)
                     .frame(width: 8, height: 8)
                 
-                Text(viewModel.isUpdating ? "追踪中" : "已停止")
+                Text(viewModel.isUpdating ? "追踪中" : "等待命令")
                     .font(.caption2)
                     .foregroundColor(viewModel.isUpdating ? .green : .red)
             }
@@ -30,20 +30,11 @@ struct WatchDashboardView: View {
                 NoDataDisplay()
             }
             
-            // 控制按钮
-            HStack(spacing: 8) {
-                Button(action: viewModel.startUpdates) {
-                    Image(systemName: "play.fill")
-                        .font(.caption)
-                }
-                .disabled(viewModel.isUpdating)
-                
-                Button(action: viewModel.stopUpdates) {
-                    Image(systemName: "stop.fill")
-                        .font(.caption)
-                }
-                .disabled(!viewModel.isUpdating)
-            }
+            // 提示信息
+            Text("由 iPhone 远程控制")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
             
             // 错误信息
             if let errorMessage = viewModel.errorMessage {
@@ -82,7 +73,7 @@ struct NoDataDisplay: View {
                 .font(.title2)
                 .foregroundColor(.gray)
             
-            Text("等待数据...")
+            Text("等待 iPhone 命令")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }

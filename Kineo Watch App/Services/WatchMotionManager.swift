@@ -6,6 +6,7 @@ protocol WatchMotionManaging {
     var currentMotionDataPublisher: AnyPublisher<MotionData?, Never> { get }
     func startUpdates() throws
     func stopUpdates()
+    func setupCommandHandling()
 }
 
 final class WatchMotionManager: WatchMotionManaging {
@@ -24,6 +25,7 @@ final class WatchMotionManager: WatchMotionManaging {
     init(connectivitySender: WatchConnectivitySending = WatchConnectivitySender()) {
         self.connectivitySender = connectivitySender
         setupMotionManager()
+        setupCommandHandling()
     }
     
     // MARK: - Public Interface
@@ -71,6 +73,15 @@ final class WatchMotionManager: WatchMotionManaging {
         lastSentData = nil
     }
     
+    func setupCommandHandling() {
+        // 设置命令处理器
+        if let sender = connectivitySender as? WatchConnectivitySender {
+            sender.setCommandHandler { [weak self] command in
+                self?.handleCommand(command)
+            }
+        }
+    }
+    
     // MARK: - Private Methods
     private func setupMotionManager() {
         motionManager.deviceMotionUpdateInterval = 1.0 / 30.0
@@ -101,6 +112,25 @@ final class WatchMotionManager: WatchMotionManaging {
             } catch {
                 print("Failed to send motion data to iPhone: \(error.localizedDescription)")
             }
+        }
+    }
+    
+    private func handleCommand(_ command: String) {
+        switch command {
+        case "startTracking":
+            print("Watch: 收到开始追踪命令")
+            do {
+                try startUpdates()
+            } catch {
+                print("Watch: 启动传感器失败: \(error)")
+            }
+            
+        case "stopTracking":
+            print("Watch: 收到停止追踪命令")
+            stopUpdates()
+            
+        default:
+            print("Watch: 未知命令: \(command)")
         }
     }
 }

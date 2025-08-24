@@ -7,6 +7,7 @@ protocol WatchConnectivityReceiving {
     var motionDataPublisher: AnyPublisher<MotionData, Never> { get }
     func startReceiving()
     func stopReceiving()
+    func sendCommandToWatch(_ command: String) async throws
 }
 
 final class WatchConnectivityReceiver: NSObject, WatchConnectivityReceiving {
@@ -47,6 +48,24 @@ final class WatchConnectivityReceiver: NSObject, WatchConnectivityReceiving {
         // WatchConnectivity 不需要显式停止
     }
     
+    func sendCommandToWatch(_ command: String) async throws {
+        guard session.isReachable else {
+            throw WatchConnectivityError.deviceNotReachable
+        }
+        
+        let message = ["command": command]
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            session.sendMessage(message, replyHandler: { response in
+                print("iPhone: Watch 响应命令: \(response)")
+                continuation.resume()
+            }, errorHandler: { error in
+                print("iPhone: 发送命令失败: \(error)")
+                continuation.resume(throwing: error)
+            })
+        }
+    }
+    
     // MARK: - Private Methods
     private func setupSession() {
         guard WCSession.isSupported() else { return }
@@ -60,7 +79,7 @@ extension WatchConnectivityReceiver: WCSessionDelegate {
         if let error = error {
             print("WatchConnectivity activation failed: \(error.localizedDescription)")
         } else {
-            print("WatchConnectivity activated successfully")
+            print("iPhone: WatchConnectivity 激活成功")
         }
     }
     
@@ -95,6 +114,18 @@ extension WatchConnectivityReceiver: WCSessionDelegate {
                 print("Failed to decode motion data: \(error)")
                 replyHandler(["error": "Failed to decode motion data"])
             }
+        }
+    }
+}
+
+// MARK: - Errors
+enum WatchConnectivityError: LocalizedError {
+    case deviceNotReachable
+    
+    var errorDescription: String? {
+        switch self {
+        case .deviceNotReachable:
+            return "Apple Watch is not reachable"
         }
     }
 } 

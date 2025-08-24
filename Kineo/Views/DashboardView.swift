@@ -16,8 +16,15 @@ struct DashboardView: View {
                 // 连接状态指示器
                 ConnectionStatusView(status: viewModel.connectionStatus)
                 
-                // 控制按钮
-                ControlButtonsView(
+                // Watch 控制按钮
+                WatchControlButtonsView(
+                    isTracking: viewModel.isWatchTracking,
+                    onStart: viewModel.startWatchTracking,
+                    onStop: viewModel.stopWatchTracking
+                )
+                
+                // iPhone 接收控制按钮
+                iPhoneControlButtonsView(
                     isReceiving: viewModel.isReceivingData,
                     onStart: viewModel.startReceiving,
                     onStop: viewModel.stopReceiving
@@ -67,44 +74,107 @@ struct ConnectionStatusView: View {
     }
 }
 
-// MARK: - Control Buttons View
-struct ControlButtonsView: View {
+// MARK: - Watch Control Buttons View
+struct WatchControlButtonsView: View {
+    let isTracking: Bool
+    let onStart: () -> Void
+    let onStop: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("Apple Watch 控制")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            HStack(spacing: 20) {
+                Button(action: onStart) {
+                    HStack {
+                        Image(systemName: "play.fill")
+                        Text("启动追踪")
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(isTracking ? Color.gray : Color.green)
+                    )
+                }
+                .disabled(isTracking)
+                
+                Button(action: onStop) {
+                    HStack {
+                        Image(systemName: "stop.fill")
+                        Text("停止追踪")
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(!isTracking ? Color.gray : Color.red)
+                    )
+                }
+                .disabled(!isTracking)
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        )
+    }
+}
+
+// MARK: - iPhone Control Buttons View
+struct iPhoneControlButtonsView: View {
     let isReceiving: Bool
     let onStart: () -> Void
     let onStop: () -> Void
     
     var body: some View {
-        HStack(spacing: 20) {
-            Button(action: onStart) {
-                HStack {
-                    Image(systemName: "play.fill")
-                    Text("开始接收")
-                }
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(isReceiving ? Color.gray : Color.blue)
-                )
-            }
-            .disabled(isReceiving)
+        VStack(spacing: 8) {
+            Text("iPhone 接收控制")
+                .font(.headline)
+                .foregroundColor(.primary)
             
-            Button(action: onStop) {
-                HStack {
-                    Image(systemName: "stop.fill")
-                    Text("停止接收")
+            HStack(spacing: 20) {
+                Button(action: onStart) {
+                    HStack {
+                        Image(systemName: "antenna.radiowaves.left.and.right")
+                        Text("开始接收")
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(isReceiving ? Color.gray : Color.blue)
+                    )
                 }
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(!isReceiving ? Color.gray : Color.red)
-                )
+                .disabled(isReceiving)
+                
+                Button(action: onStop) {
+                    HStack {
+                        Image(systemName: "antenna.radiowaves.slash")
+                        Text("停止接收")
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(!isReceiving ? Color.gray : Color.orange)
+                    )
+                }
+                .disabled(!isReceiving)
             }
-            .disabled(!isReceiving)
         }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        )
     }
 }
 
@@ -194,7 +264,7 @@ struct NoDataView: View {
                 .font(.title2)
                 .foregroundColor(.secondary)
             
-            Text("请确保 Apple Watch 已连接并开始运动追踪")
+            Text("请先启动 Apple Watch 追踪，然后开始接收数据")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
