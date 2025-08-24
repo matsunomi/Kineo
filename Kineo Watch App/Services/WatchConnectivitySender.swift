@@ -18,46 +18,58 @@ final class WatchConnectivitySender: NSObject, WatchConnectivitySending {
     init(session: WCSession = .default) {
         self.session = session
         super.init()
+        print("Watch: WatchConnectivitySender 初始化")
         setupSession()
     }
     
     // MARK: - Public Interface
     var isReachable: Bool {
-        session.isReachable
+        let reachable = session.isReachable
+        print("Watch: 检查连接状态 - isReachable: \(reachable)")
+        return reachable
     }
     
     func sendMotionData(_ data: MotionData) async throws {
+        print("Watch: 尝试发送运动数据到 iPhone")
         guard session.isReachable else {
+            print("Watch: ❌ iPhone 不可达")
             throw WatchConnectivityError.deviceNotReachable
         }
         
+        print("Watch: ✅ iPhone 可达，发送运动数据...")
         let encoder = JSONEncoder()
         let data = try encoder.encode(data)
         let message = ["motionData": data]
         
         return try await withCheckedThrowingContinuation { continuation in
-            session.sendMessage(message, replyHandler: { _ in
+            session.sendMessage(message, replyHandler: { response in
+                print("Watch: ✅ 运动数据发送成功，iPhone 响应: \(response)")
                 continuation.resume()
             }, errorHandler: { error in
+                print("Watch: ❌ 运动数据发送失败: \(error)")
                 continuation.resume(throwing: error)
             })
         }
     }
     
     func startListeningForCommands() {
-        // 开始监听来自 iPhone 的命令
         print("Watch: 开始监听来自 iPhone 的命令")
     }
     
     // MARK: - Private Methods
     private func setupSession() {
-        guard WCSession.isSupported() else { return }
+        guard WCSession.isSupported() else { 
+            print("Watch: ❌ WatchConnectivity 不支持")
+            return 
+        }
+        print("Watch: 设置 WatchConnectivity session")
         session.delegate = self
         session.activate()
     }
     
     func setCommandHandler(_ handler: @escaping (String) -> Void) {
         commandHandler = handler
+        print("Watch: 命令处理器已设置")
     }
 }
 
@@ -65,9 +77,11 @@ final class WatchConnectivitySender: NSObject, WatchConnectivitySending {
 extension WatchConnectivitySender: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
-            print("WatchConnectivity activation failed: \(error.localizedDescription)")
+            print("Watch: ❌ WatchConnectivity 激活失败: \(error.localizedDescription)")
         } else {
-            print("Watch: WatchConnectivity 激活成功")
+            print("Watch: ✅ WatchConnectivity 激活成功，状态: \(activationState.rawValue)")
+            print("Watch: iPhone 配对状态: \(session.isPaired)")
+            print("Watch: iPhone 可达状态: \(session.isReachable)")
         }
     }
     
@@ -80,20 +94,27 @@ extension WatchConnectivitySender: WCSessionDelegate {
     
     // 接收来自 iPhone 的命令
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
+        print("Watch: 📨 收到来自 iPhone 的消息: \(message)")
         queue.async { [weak self] in
             guard let self = self,
                   let command = message["command"] as? String else {
+                print("Watch: ❌ 命令格式无效")
                 replyHandler(["error": "Invalid command format"])
                 return
             }
             
-            print("Watch: 收到来自 iPhone 的命令: \(command)")
+            print("Watch: ✅ 收到命令: \(command)")
             
             // 处理命令
             self.commandHandler?(command)
             
             replyHandler(["success": true, "command": command])
         }
+    }
+    
+    // 监听连接状态变化
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        print("Watch: 🔄 iPhone 连接状态变化: \(session.isReachable ? "可达" : "不可达")")
     }
 }
 
