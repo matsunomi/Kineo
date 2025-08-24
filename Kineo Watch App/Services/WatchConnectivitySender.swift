@@ -103,7 +103,6 @@ extension WatchConnectivitySender: WCSessionDelegate {
         } else {
             print("Watch: ✅ WatchConnectivity 激活成功，状态: \(activationState.rawValue)")
             print("Watch: iPhone 可达状态: \(session.isReachable)")
-            print("Watch: 配对状态: \(session.isPaired)")
         }
     }
     

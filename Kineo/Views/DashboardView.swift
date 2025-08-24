@@ -12,54 +12,93 @@ struct DashboardView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
-                // 连接状态指示器
-                ConnectionStatusView(status: viewModel.connectionStatus)
-                
-                // Watch 应用状态检查
-                WatchAppStatusView(viewModel: viewModel)
-                
-                // 接收到的数字显示
-                ReceivedNumberView(viewModel: viewModel)
-                
-                // Watch 控制按钮
-                WatchControlButtonsView(
-                    isTracking: viewModel.isWatchTracking,
-                    onStart: viewModel.startWatchTracking,
-                    onStop: viewModel.stopWatchTracking
-                )
-                
-                // iPhone 接收控制按钮
-                iPhoneControlButtonsView(
-                    isReceiving: viewModel.isReceivingData,
-                    onStart: viewModel.startReceiving,
-                    onStop: viewModel.stopReceiving
-                )
-                
-                // 运动数据显示
-                if let motionData = viewModel.currentMotionData {
-                    MotionDataView(motionData: motionData)
-                } else {
-                    NoDataView()
+            ScrollView {
+                VStack(spacing: 20) {
+                    // 连接状态视图
+                    ConnectionStatusView(
+                        connectionStatus: viewModel.connectionStatus,
+                        isWatchPaired: viewModel.isWatchPaired,
+                        isWatchAppInstalled: viewModel.isWatchAppInstalled
+                    )
+                    
+                    // Watch 控制按钮
+                    WatchControlButtonsView(
+                        isWatchTracking: viewModel.isWatchTracking,
+                        onStartTracking: viewModel.startWatchTracking,
+                        onStopTracking: viewModel.stopWatchTracking
+                    )
+                    
+                    // iPhone 控制按钮
+                    iPhoneControlButtonsView(
+                        isReceivingData: viewModel.isReceivingData,
+                        onStartReceiving: viewModel.startReceiving,
+                        onStopReceiving: viewModel.stopReceiving
+                    )
+                    
+                    // 诊断按钮
+                    DiagnosticButtonView(viewModel: viewModel)
+                    
+                    // 运动数据显示
+                    if let motionData = viewModel.currentMotionData {
+                        MotionDataView(motionData: motionData)
+                    } else {
+                        NoDataView()
+                    }
+                    
+                    // 接收到的数字显示
+                    if let number = viewModel.receivedNumber {
+                        ReceivedNumberView(number: number)
+                    }
+                    
+                    // 错误信息显示
+                    if let errorMessage = viewModel.errorMessage {
+                        ErrorView(message: errorMessage)
+                    }
+                    
+                    // Watch 应用状态
+                    WatchAppStatusView(
+                        isWatchPaired: viewModel.isWatchPaired,
+                        isWatchAppInstalled: viewModel.isWatchAppInstalled
+                    )
                 }
-                
-                // 错误信息显示
-                if let errorMessage = viewModel.errorMessage {
-                    ErrorView(message: errorMessage)
-                }
-                
-                Spacer()
+                .padding()
             }
-            .padding()
-            .navigationTitle("Kineo")
+            .navigationTitle("Kineo Dashboard")
             .navigationBarTitleDisplayMode(.large)
         }
     }
 }
 
+// MARK: - Diagnostic Button View
+struct DiagnosticButtonView: View {
+    let viewModel: MotionViewModel
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            Text("诊断工具")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            
+            Button("🔍 重新检查状态") {
+                // 手动触发状态检查
+                viewModel.startReceiving()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            
+            Text("点击此按钮重新检查 Watch 连接状态")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+}
+
 // MARK: - Received Number View
 struct ReceivedNumberView: View {
-    @ObservedObject var viewModel: MotionViewModel
+    let number: String
     
     var body: some View {
         VStack(spacing: 8) {
@@ -67,16 +106,10 @@ struct ReceivedNumberView: View {
                 .font(.headline)
                 .foregroundColor(.primary)
             
-            if let receivedNumber = viewModel.receivedNumber {
-                Text("最新数字: \(receivedNumber)")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.blue)
-            } else {
-                Text("等待数字...")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-            }
+            Text("最新数字: \(number)")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.blue)
         }
         .padding()
         .background(
@@ -88,7 +121,8 @@ struct ReceivedNumberView: View {
 
 // MARK: - Watch App Status View
 struct WatchAppStatusView: View {
-    @ObservedObject var viewModel: MotionViewModel
+    let isWatchPaired: Bool
+    let isWatchAppInstalled: Bool
     
     var body: some View {
         VStack(spacing: 8) {
@@ -99,27 +133,20 @@ struct WatchAppStatusView: View {
             HStack(spacing: 12) {
                 StatusIndicator(
                     title: "配对状态",
-                    isActive: viewModel.isWatchPaired,
+                    isActive: isWatchPaired,
                     activeColor: .green,
                     inactiveColor: .red
                 )
                 
                 StatusIndicator(
                     title: "应用安装",
-                    isActive: viewModel.isWatchAppInstalled,
+                    isActive: isWatchAppInstalled,
                     activeColor: .green,
                     inactiveColor: .orange
                 )
-                
-                StatusIndicator(
-                    title: "连接状态",
-                    isActive: viewModel.connectionStatus == .connected,
-                    activeColor: .green,
-                    inactiveColor: .red
-                )
             }
             
-            if !viewModel.isWatchAppInstalled {
+            if !isWatchAppInstalled {
                 Text("⚠️ Watch 应用未安装，请检查部署配置")
                     .font(.caption)
                     .foregroundColor(.orange)
@@ -156,32 +183,58 @@ struct StatusIndicator: View {
 
 // MARK: - Connection Status View
 struct ConnectionStatusView: View {
-    let status: ConnectionStatus
+    let connectionStatus: ConnectionStatus
+    let isWatchPaired: Bool
+    let isWatchAppInstalled: Bool
     
     var body: some View {
-        HStack {
-            Circle()
-                .fill(status.color)
-                .frame(width: 12, height: 12)
+        VStack(spacing: 12) {
+            HStack {
+                Circle()
+                    .fill(connectionStatus.color)
+                    .frame(width: 12, height: 12)
+                
+                Text(connectionStatus.displayText)
+                    .font(.headline)
+                    .foregroundColor(connectionStatus.color)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(connectionStatus.color.opacity(0.1))
+            )
             
-            Text(status.displayText)
-                .font(.headline)
-                .foregroundColor(status.color)
+            // 状态详情
+            VStack(spacing: 4) {
+                HStack {
+                    Circle()
+                        .fill(isWatchPaired ? .green : .red)
+                        .frame(width: 8, height: 8)
+                    Text("Watch 配对: \(isWatchPaired ? "是" : "否")")
+                        .font(.caption)
+                }
+                
+                HStack {
+                    Circle()
+                        .fill(isWatchAppInstalled ? .green : .orange)
+                        .frame(width: 8, height: 8)
+                    Text("Watch 应用: \(isWatchAppInstalled ? "已安装" : "未安装")")
+                        .font(.caption)
+                }
+            }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(status.color.opacity(0.1))
-        )
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
     }
 }
 
 // MARK: - Watch Control Buttons View
 struct WatchControlButtonsView: View {
-    let isTracking: Bool
-    let onStart: () -> Void
-    let onStop: () -> Void
+    let isWatchTracking: Bool
+    let onStartTracking: () -> Void
+    let onStopTracking: () -> Void
     
     var body: some View {
         VStack(spacing: 8) {
@@ -190,7 +243,7 @@ struct WatchControlButtonsView: View {
                 .foregroundColor(.primary)
             
             HStack(spacing: 20) {
-                Button(action: onStart) {
+                Button(action: onStartTracking) {
                     HStack {
                         Image(systemName: "play.fill")
                         Text("启动追踪")
@@ -200,12 +253,12 @@ struct WatchControlButtonsView: View {
                     .padding(.vertical, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 25)
-                            .fill(isTracking ? Color.gray : Color.green)
+                            .fill(isWatchTracking ? Color.gray : Color.green)
                     )
                 }
-                .disabled(isTracking)
+                .disabled(isWatchTracking)
                 
-                Button(action: onStop) {
+                Button(action: onStopTracking) {
                     HStack {
                         Image(systemName: "stop.fill")
                         Text("停止追踪")
@@ -215,10 +268,10 @@ struct WatchControlButtonsView: View {
                     .padding(.vertical, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 25)
-                            .fill(!isTracking ? Color.gray : Color.red)
+                            .fill(!isWatchTracking ? Color.gray : Color.red)
                     )
                 }
-                .disabled(!isTracking)
+                .disabled(!isWatchTracking)
             }
         }
         .padding()
@@ -231,9 +284,9 @@ struct WatchControlButtonsView: View {
 
 // MARK: - iPhone Control Buttons View
 struct iPhoneControlButtonsView: View {
-    let isReceiving: Bool
-    let onStart: () -> Void
-    let onStop: () -> Void
+    let isReceivingData: Bool
+    let onStartReceiving: () -> Void
+    let onStopReceiving: () -> Void
     
     var body: some View {
         VStack(spacing: 8) {
@@ -242,7 +295,7 @@ struct iPhoneControlButtonsView: View {
                 .foregroundColor(.primary)
             
             HStack(spacing: 20) {
-                Button(action: onStart) {
+                Button(action: onStartReceiving) {
                     HStack {
                         Image(systemName: "antenna.radiowaves.left.and.right")
                         Text("开始接收")
@@ -252,12 +305,12 @@ struct iPhoneControlButtonsView: View {
                     .padding(.vertical, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 25)
-                            .fill(isReceiving ? Color.gray : Color.blue)
+                            .fill(isReceivingData ? Color.gray : Color.blue)
                     )
                 }
-                .disabled(isReceiving)
+                .disabled(isReceivingData)
                 
-                Button(action: onStop) {
+                Button(action: onStopReceiving) {
                     HStack {
                         Image(systemName: "antenna.radiowaves.slash")
                         Text("停止接收")
@@ -267,10 +320,10 @@ struct iPhoneControlButtonsView: View {
                     .padding(.vertical, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 25)
-                            .fill(!isReceiving ? Color.gray : Color.orange)
+                            .fill(!isReceivingData ? Color.gray : Color.orange)
                     )
                 }
-                .disabled(!isReceiving)
+                .disabled(!isReceivingData)
             }
         }
         .padding()
