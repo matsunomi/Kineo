@@ -1,12 +1,13 @@
 import Foundation
 import Combine
+import SwiftUI
 
 @MainActor
 final class WatchMotionViewModel: ObservableObject {
     // MARK: - Published Properties
-    @Published private(set) var motionData: MotionData?
-    @Published private(set) var isUpdating = false
-    @Published private(set) var error: Error?
+    @Published var currentMotionData: MotionData?
+    @Published var isUpdating = false
+    @Published var errorMessage: String?
     
     // MARK: - Private Properties
     private let motionManager: WatchMotionManaging
@@ -18,31 +19,29 @@ final class WatchMotionViewModel: ObservableObject {
         setupBindings()
     }
     
-    // MARK: - Public Interface
+    // MARK: - Public Methods
     func startUpdates() {
         do {
             try motionManager.startUpdates()
             isUpdating = true
-            error = nil
+            errorMessage = nil
         } catch {
-            self.error = error
+            errorMessage = error.localizedDescription
         }
     }
     
     func stopUpdates() {
         motionManager.stopUpdates()
         isUpdating = false
+        currentMotionData = nil
     }
     
     // MARK: - Private Methods
     private func setupBindings() {
         motionManager.currentMotionDataPublisher
             .receive(on: DispatchQueue.main)
-            // Throttle updates to prevent UI flickering
-            // Update UI at most every 200ms (5Hz) instead of 50Hz
-            .throttle(for: .milliseconds(200), scheduler: DispatchQueue.main, latest: true)
             .sink { [weak self] motionData in
-                self?.motionData = motionData
+                self?.currentMotionData = motionData
             }
             .store(in: &cancellables)
     }

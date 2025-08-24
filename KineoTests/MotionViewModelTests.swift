@@ -6,105 +6,115 @@ import Combine
 final class MotionViewModelTests: XCTestCase {
     // MARK: - Properties
     var sut: MotionViewModel!
-    var mockMotionManager: MockMotionManager!
+    var mockConnectivityReceiver: MockWatchConnectivityReceiver!
     var cancellables: Set<AnyCancellable>!
     
     // MARK: - Setup & Teardown
     override func setUp() {
         super.setUp()
-        mockMotionManager = MockMotionManager()
-        sut = MotionViewModel(motionManager: mockMotionManager)
+        mockConnectivityReceiver = MockWatchConnectivityReceiver()
+        sut = MotionViewModel(connectivityReceiver: mockConnectivityReceiver)
         cancellables = []
     }
     
     override func tearDown() {
         sut = nil
-        mockMotionManager = nil
-        cancellables = nil
+        mockConnectivityReceiver = nil
+        cancellables = []
         super.tearDown()
     }
     
-    // MARK: - Initial State Tests
-    func testInitialState_ShouldHaveNoMotionData() {
-        XCTAssertNil(sut.motionData)
+    // MARK: - Tests
+    func test_init_shouldSetInitialState() {
+        // Then
+        XCTAssertNil(sut.currentMotionData)
+        XCTAssertFalse(sut.isReceivingData)
+        XCTAssertEqual(sut.connectionStatus, .disconnected)
+        XCTAssertNil(sut.errorMessage)
     }
     
-    // MARK: - Data Flow Tests
-    func testMotionDataUpdate_ShouldUpdateViewModelWithNewData() {
+    func test_startReceiving_shouldCallConnectivityReceiverAndUpdateState() {
+        // When
+        sut.startReceiving()
+        
+        // Then
+        XCTAssertTrue(mockConnectivityReceiver.startReceivingCalled)
+        XCTAssertTrue(sut.isReceivingData)
+        XCTAssertEqual(sut.connectionStatus, .connecting)
+    }
+    
+    func test_stopReceiving_shouldUpdateState() {
         // Given
-        let expectation = expectation(description: "Motion data should be updated")
-        let testData = MotionData(
+        sut.startReceiving()
+        
+        // When
+        sut.stopReceiving()
+        
+        // Then
+        XCTAssertFalse(sut.isReceivingData)
+        XCTAssertEqual(sut.connectionStatus, .disconnected)
+    }
+    
+    func test_whenMotionDataReceived_shouldUpdateCurrentMotionData() {
+        // Given
+        let expectedMotionData = MotionData(
             acceleration: SIMD3<Double>(1.0, 2.0, 3.0),
-            rotation: SIMD3<Double>(4.0, 5.0, 6.0)
+            rotation: SIMD3<Double>(0.1, 0.2, 0.3)
         )
         
         // When
-        mockMotionManager.simulateMotionData(testData)
+        mockConnectivityReceiver.simulateMotionData(expectedMotionData)
         
         // Then
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertNotNil(self.sut.motionData)
-            XCTAssertEqual(self.sut.motionData?.acceleration.x, 1.0)
-            XCTAssertEqual(self.sut.motionData?.acceleration.y, 2.0)
-            XCTAssertEqual(self.sut.motionData?.acceleration.z, 3.0)
-            XCTAssertEqual(self.sut.motionData?.rotation.x, 4.0)
-            XCTAssertEqual(self.sut.motionData?.rotation.y, 5.0)
-            XCTAssertEqual(self.sut.motionData?.rotation.z, 6.0)
-            expectation.fulfill()
-        }
-        
-        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(sut.currentMotionData, expectedMotionData)
+        XCTAssertEqual(sut.connectionStatus, .connected)
+        XCTAssertNil(sut.errorMessage)
     }
     
-    func testMotionDataRemoval_ShouldClearViewModelData() {
+    func test_whenConnectionStatusChanges_shouldUpdateConnectionStatus() {
         // Given
-        let expectation = expectation(description: "Motion data should be cleared")
-        let testData = MotionData(
-            acceleration: SIMD3<Double>(1.0, 2.0, 3.0),
-            rotation: SIMD3<Double>(4.0, 5.0, 6.0)
-        )
+        sut.startReceiving()
         
         // When
-        mockMotionManager.simulateMotionData(testData)
-        mockMotionManager.simulateNoMotionData()
+        mockConnectivityReceiver.simulateReachabilityChange(false)
         
         // Then
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertNil(self.sut.motionData)
+        // Wait for the timer to update connection status
+        let expectation = XCTestExpectation(description: "Connection status updated")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
             expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 2.0)
         
-        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(sut.connectionStatus, .disconnected)
+        XCTAssertEqual(sut.errorMessage, "Apple Watch 连接断开")
+    }
+}
+
+// MARK: - Mock WatchConnectivityReceiver
+class MockWatchConnectivityReceiver: WatchConnectivityReceiving {
+    var isReachable: Bool = true
+    var startReceivingCalled = false
+    var motionDataSubject = PassthroughSubject<MotionData, Never>()
+    
+    var motionDataPublisher: AnyPublisher<MotionData, Never> {
+        motionDataSubject.eraseToAnyPublisher()
     }
     
-    // MARK: - Edge Cases
-    func testMultipleDataUpdates_ShouldAlwaysReflectLatestData() {
-        // Given
-        let expectation = expectation(description: "Latest motion data should be reflected")
-        let firstData = MotionData(
-            acceleration: SIMD3<Double>(1.0, 2.0, 3.0),
-            rotation: SIMD3<Double>(4.0, 5.0, 6.0)
-        )
-        let secondData = MotionData(
-            acceleration: SIMD3<Double>(7.0, 8.0, 9.0),
-            rotation: SIMD3<Double>(10.0, 11.0, 12.0)
-        )
-        
-        // When
-        mockMotionManager.simulateMotionData(firstData)
-        mockMotionManager.simulateMotionData(secondData)
-        
-        // Then
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertEqual(self.sut.motionData?.acceleration.x, 7.0)
-            XCTAssertEqual(self.sut.motionData?.acceleration.y, 8.0)
-            XCTAssertEqual(self.sut.motionData?.acceleration.z, 9.0)
-            XCTAssertEqual(self.sut.motionData?.rotation.x, 10.0)
-            XCTAssertEqual(self.sut.motionData?.rotation.y, 11.0)
-            XCTAssertEqual(self.sut.motionData?.rotation.z, 12.0)
-            expectation.fulfill()
-        }
-        
-        wait(for: [expectation], timeout: 1.0)
+    func startReceiving() {
+        startReceivingCalled = true
+    }
+    
+    func stopReceiving() {
+        // Mock implementation
+    }
+    
+    // MARK: - Testing Helpers
+    func simulateMotionData(_ data: MotionData) {
+        motionDataSubject.send(data)
+    }
+    
+    func simulateReachabilityChange(_ reachable: Bool) {
+        isReachable = reachable
     }
 } 

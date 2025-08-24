@@ -9,14 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        NavigationStack {
-            DashboardView()
-                .navigationTitle("Kineo")
-        }
+        DashboardView()
     }
 }
 
 #Preview {
     ContentView()
-        .previewDevice("iPhone 15")
 }
