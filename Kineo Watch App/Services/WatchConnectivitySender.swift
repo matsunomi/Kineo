@@ -5,6 +5,7 @@ import Combine
 protocol WatchConnectivitySending {
     var isReachable: Bool { get }
     func sendMotionData(_ data: MotionData) async throws
+    func sendMessage(_ message: [String: Any]) async throws
     func startListeningForCommands()
 }
 
@@ -47,6 +48,26 @@ final class WatchConnectivitySender: NSObject, WatchConnectivitySending {
                 continuation.resume()
             }, errorHandler: { error in
                 print("Watch: ❌ 运动数据发送失败: \(error)")
+                continuation.resume(throwing: error)
+            })
+        }
+    }
+    
+    func sendMessage(_ message: [String: Any]) async throws {
+        print("Watch: 尝试发送消息到 iPhone: \(message)")
+        guard session.isReachable else {
+            print("Watch: ❌ iPhone 不可达")
+            throw WatchConnectivityError.deviceNotReachable
+        }
+        
+        print("Watch: ✅ iPhone 可达，发送消息...")
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            session.sendMessage(message, replyHandler: { response in
+                print("Watch: ✅ 消息发送成功，iPhone 响应: \(response)")
+                continuation.resume()
+            }, errorHandler: { error in
+                print("Watch: ❌ 消息发送失败: \(error)")
                 continuation.resume(throwing: error)
             })
         }

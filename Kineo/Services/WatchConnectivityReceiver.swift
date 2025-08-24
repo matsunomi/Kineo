@@ -7,6 +7,7 @@ protocol WatchConnectivityReceiving {
     var isWatchPaired: Bool { get }
     var isWatchAppInstalled: Bool { get }
     var motionDataPublisher: AnyPublisher<MotionData, Never> { get }
+    var numberPublisher: AnyPublisher<String, Never> { get }
     func startReceiving()
     func stopReceiving()
     func sendCommandToWatch(_ command: String) async throws
@@ -16,6 +17,7 @@ final class WatchConnectivityReceiver: NSObject, WatchConnectivityReceiving {
     // MARK: - Properties
     private let session: WCSession
     private let motionDataSubject = PassthroughSubject<MotionData, Never>()
+    private let numberSubject = PassthroughSubject<String, Never>()
     private let queue = DispatchQueue(label: "com.kineo.watchconnectivity.receiver", qos: .userInitiated)
     
     // MARK: - Public Interface
@@ -39,6 +41,10 @@ final class WatchConnectivityReceiver: NSObject, WatchConnectivityReceiving {
     
     var motionDataPublisher: AnyPublisher<MotionData, Never> {
         motionDataSubject.eraseToAnyPublisher()
+    }
+    
+    var numberPublisher: AnyPublisher<String, Never> {
+        numberSubject.eraseToAnyPublisher()
     }
     
     // MARK: - Initialization
@@ -130,28 +136,41 @@ extension WatchConnectivityReceiver: WCSessionDelegate {
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         print("iPhone: 📨 收到来自 Watch 的消息: \(message)")
         queue.async { [weak self] in
-            guard let self = self,
-                  let motionDataData = message["motionData"] as? Data else {
-                print("iPhone: ❌ 消息格式无效")
-                replyHandler(["error": "Invalid message format"])
-                return
-            }
+            guard let self = self else { return }
             
-            do {
-                let decoder = JSONDecoder()
-                let motionData = try decoder.decode(MotionData.self, from: motionDataData)
-                
-                print("iPhone: ✅ 成功解码运动数据")
+            // 处理运动数据
+            if let motionDataData = message["motionData"] as? Data {
+                do {
+                    let decoder = JSONDecoder()
+                    let motionData = try decoder.decode(MotionData.self, from: motionDataData)
+                    
+                    print("iPhone: ✅ 成功解码运动数据")
+                    
+                    // 发送数据到主线程
+                    DispatchQueue.main.async {
+                        self.motionDataSubject.send(motionData)
+                    }
+                    
+                    replyHandler(["success": true])
+                } catch {
+                    print("iPhone: ❌ 解码运动数据失败: \(error)")
+                    replyHandler(["error": "Failed to decode motion data"])
+                }
+            }
+            // 处理数字数据
+            else if let number = message["number"] as? String {
+                print("iPhone: ✅ 收到数字: \(number)")
                 
                 // 发送数据到主线程
                 DispatchQueue.main.async {
-                    self.motionDataSubject.send(motionData)
+                    self.numberSubject.send(number)
                 }
                 
-                replyHandler(["success": true])
-            } catch {
-                print("iPhone: ❌ 解码运动数据失败: \(error)")
-                replyHandler(["error": "Failed to decode motion data"])
+                replyHandler(["success": true, "number": number])
+            }
+            else {
+                print("iPhone: ❌ 消息格式无效")
+                replyHandler(["error": "Invalid message format"])
             }
         }
     }

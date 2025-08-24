@@ -12,6 +12,7 @@ final class MotionViewModel: ObservableObject {
     @Published var isWatchTracking = false
     @Published var isWatchPaired = false
     @Published var isWatchAppInstalled = false
+    @Published var receivedNumber: String?
     
     // MARK: - Private Properties
     private let connectivityReceiver: WatchConnectivityReceiving
@@ -66,6 +67,16 @@ final class MotionViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] motionData in
                 self?.currentMotionData = motionData
+                self?.connectionStatus = .connected
+                self?.errorMessage = nil
+            }
+            .store(in: &cancellables)
+        
+        // 监听来自 Watch 的数字数据
+        connectivityReceiver.numberPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] number in
+                self?.receivedNumber = number
                 self?.connectionStatus = .connected
                 self?.errorMessage = nil
             }

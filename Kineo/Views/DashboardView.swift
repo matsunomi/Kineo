@@ -19,6 +19,9 @@ struct DashboardView: View {
                 // Watch 应用状态检查
                 WatchAppStatusView(viewModel: viewModel)
                 
+                // 接收到的数字显示
+                ReceivedNumberView(viewModel: viewModel)
+                
                 // Watch 控制按钮
                 WatchControlButtonsView(
                     isTracking: viewModel.isWatchTracking,
@@ -51,6 +54,35 @@ struct DashboardView: View {
             .navigationTitle("Kineo")
             .navigationBarTitleDisplayMode(.large)
         }
+    }
+}
+
+// MARK: - Received Number View
+struct ReceivedNumberView: View {
+    @ObservedObject var viewModel: MotionViewModel
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("从 Watch 接收的数字")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            if let receivedNumber = viewModel.receivedNumber {
+                Text("最新数字: \(receivedNumber)")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue)
+            } else {
+                Text("等待数字...")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        )
     }
 }
 

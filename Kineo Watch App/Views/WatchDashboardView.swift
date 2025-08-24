@@ -9,6 +9,8 @@ import SwiftUI
 
 struct WatchDashboardView: View {
     @StateObject private var viewModel = WatchMotionViewModel()
+    @State private var inputNumber: String = ""
+    @State private var lastSentNumber: String = ""
     
     var body: some View {
         VStack(spacing: 8) {
@@ -23,7 +25,38 @@ struct WatchDashboardView: View {
                     .foregroundColor(viewModel.isUpdating ? .green : .red)
             }
             
-            // 运动数据显示
+            // 连接状态
+            HStack {
+                Circle()
+                    .fill(viewModel.isConnected ? Color.green : Color.red)
+                    .frame(width: 8, height: 8)
+                
+                Text(viewModel.isConnected ? "已连接" : "未连接")
+                    .font(.caption2)
+                    .foregroundColor(viewModel.isConnected ? .green : .red)
+            }
+            
+            // 数字输入
+            HStack {
+                TextField("输入数字", text: $inputNumber)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.numberPad)
+                    .frame(width: 80)
+                
+                Button("发送") {
+                    sendNumber()
+                }
+                .disabled(inputNumber.isEmpty)
+            }
+            
+            // 最后发送的数字
+            if !lastSentNumber.isEmpty {
+                Text("已发送: \(lastSentNumber)")
+                    .font(.caption2)
+                    .foregroundColor(.blue)
+            }
+            
+            // 运动数据显示（保留原有功能）
             if let motionData = viewModel.currentMotionData {
                 MotionDataDisplay(motionData: motionData)
             } else {
@@ -45,6 +78,20 @@ struct WatchDashboardView: View {
             }
         }
         .padding(8)
+    }
+    
+    private func sendNumber() {
+        guard !inputNumber.isEmpty else { return }
+        
+        Task {
+            do {
+                try await viewModel.sendNumberToiPhone(inputNumber)
+                lastSentNumber = inputNumber
+                inputNumber = ""
+            } catch {
+                print("Watch: 发送数字失败: \(error)")
+            }
+        }
     }
 }
 
