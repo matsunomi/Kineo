@@ -7,129 +7,56 @@
 
 import SwiftUI
 
+// MARK: - 极简 Watch Dashboard View
 struct WatchDashboardView: View {
+    
+    // MARK: - 状态对象
     @StateObject private var viewModel = WatchMotionViewModel()
-    @State private var inputNumber: String = ""
-    @State private var lastSentNumber: String = ""
     
+    // MARK: - 视图
     var body: some View {
-        VStack(spacing: 8) {
-            // 状态指示器
-            HStack {
-                Circle()
-                    .fill(viewModel.isUpdating ? Color.green : Color.red)
-                    .frame(width: 8, height: 8)
-                
-                Text(viewModel.isUpdating ? "追踪中" : "等待命令")
-                    .font(.caption2)
-                    .foregroundColor(viewModel.isUpdating ? .green : .red)
-            }
-            
-            // 连接状态
-            HStack {
-                Circle()
-                    .fill(viewModel.isConnected ? Color.green : Color.red)
-                    .frame(width: 8, height: 8)
-                
-                Text(viewModel.isConnected ? "已连接" : "未连接")
-                    .font(.caption2)
-                    .foregroundColor(viewModel.isConnected ? .green : .red)
-            }
-            
-            // 数字输入
-            HStack {
-                TextField("输入数字", text: $inputNumber)
-                    .padding(4)
-                    .frame(width: 80)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                    )
-                
-                Button("发送") {
-                    sendNumber()
-                }
-                .disabled(inputNumber.isEmpty)
-            }
-            
-            // 最后发送的数字
-            if !lastSentNumber.isEmpty {
-                Text("已发送: \(lastSentNumber)")
-                    .font(.caption2)
-                    .foregroundColor(.blue)
-            }
-            
-            // 运动数据显示（保留原有功能）
-            if let motionData = viewModel.currentMotionData {
-                MotionDataDisplay(motionData: motionData)
-            } else {
-                NoDataDisplay()
-            }
-            
-            // 提示信息
-            Text("由 iPhone 远程控制")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-            
-            // 错误信息
-            if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
-                    .font(.caption2)
-                    .foregroundColor(.red)
-                    .multilineTextAlignment(.center)
-            }
-        }
-        .padding(8)
-    }
-    
-    private func sendNumber() {
-        guard !inputNumber.isEmpty else { return }
-        
-        Task {
-            do {
-                try await viewModel.sendNumberToiPhone(inputNumber)
-                lastSentNumber = inputNumber
-                inputNumber = ""
-            } catch {
-                print("Watch: 发送数字失败: \(error)")
-            }
-        }
-    }
-}
-
-// MARK: - Motion Data Display
-struct MotionDataDisplay: View {
-    let motionData: MotionData
-    
-    var body: some View {
-        VStack(spacing: 4) {
-            Text("加速度: \(motionData.accelerationMagnitude, specifier: "%.2f")")
-                .font(.caption2)
-                .foregroundColor(.blue)
-            
-            Text("旋转: \(motionData.rotationMagnitudeDegreesPerSecond, specifier: "%.1f")°/s")
-                .font(.caption2)
-                .foregroundColor(.green)
-        }
-    }
-}
-
-// MARK: - No Data Display
-struct NoDataDisplay: View {
-    var body: some View {
-        VStack(spacing: 4) {
-            Image(systemName: "sensor.tag.radiowaves.forward")
+        VStack(spacing: 20) {
+            // 标题
+            Text("Kineo Watch")
                 .font(.title2)
-                .foregroundColor(.gray)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
             
-            Text("等待 iPhone 命令")
-                .font(.caption2)
-                .foregroundColor(.secondary)
+            // 发送按钮
+            Button("发送数字 1") {
+                Task {
+                    do {
+                        try await viewModel.sendNumberToiPhone("1")
+                    } catch {
+                        print("⌚️ Watch: 发送失败: \(error)")
+                    }
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            
+            // 点击次数
+            VStack(spacing: 5) {
+                Text("点击次数")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Text("\(viewModel.clickCount)")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.green)
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .onAppear {
+            print("⌚️ Watch: WatchDashboardView 出现")
         }
     }
 }
 
+// MARK: - 预览
 #Preview {
     WatchDashboardView()
 } 

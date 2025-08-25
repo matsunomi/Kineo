@@ -1,101 +1,30 @@
 import Foundation
-import Combine
-import SwiftUI
 
+// MARK: - 极简 Watch ViewModel
 @MainActor
 final class WatchMotionViewModel: ObservableObject {
-    // MARK: - Published Properties
-    @Published var currentMotionData: MotionData?
-    @Published var isUpdating = false
-    @Published var errorMessage: String?
-    @Published var isConnected = false
     
-    // MARK: - Private Properties
-    private let motionManager: WatchMotionManaging
+    // MARK: - 发布属性
+    @Published var clickCount: Int = 0
+    
+    // MARK: - 私有属性
     private let connectivitySender: any WatchConnectivitySending
-    private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Initialization
-    init(motionManager: WatchMotionManaging = WatchMotionManager(), 
-         connectivitySender: any WatchConnectivitySending = WatchConnectivitySender()) {
-        self.motionManager = motionManager
+    // MARK: - 初始化
+    init(connectivitySender: any WatchConnectivitySending = WatchConnectivitySender()) {
         self.connectivitySender = connectivitySender
-        setupBindings()
-        setupCommandHandling()
+        print("⌚️ Watch: WatchMotionViewModel 初始化")
     }
     
-    // MARK: - Public Methods
-    func startUpdates() {
-        do {
-            try motionManager.startUpdates()
-            isUpdating = true
-            errorMessage = nil
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-    
-    func stopUpdates() {
-        motionManager.stopUpdates()
-        isUpdating = false
-        currentMotionData = nil
-    }
-    
+    // MARK: - 公共方法
     func sendNumberToiPhone(_ number: String) async throws {
-        guard connectivitySender.isReachable else {
-            throw WatchConnectivityError.deviceNotReachable
-        }
+        print("⌚️ Watch: 准备发送数字: \(number)")
+        
         let message = ["number": number]
         try await connectivitySender.sendMessage(message)
-        print("Watch: 数字发送成功")
-    }
-    
-    // MARK: - Private Methods
-    private func setupBindings() {
-        motionManager.currentMotionDataPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] motionData in
-                self?.currentMotionData = motionData
-            }
-            .store(in: &cancellables)
         
-        // 监听连接状态变化
-        Timer.publish(every: 1.0, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                self?.updateConnectionStatus()
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func setupCommandHandling() {
-        // 设置命令处理器
-        if let sender = connectivitySender as? WatchConnectivitySender {
-            sender.setCommandHandler { [weak self] command in
-                self?.handleCommand(command)
-            }
-        }
-    }
-    
-    private func handleCommand(_ command: String) {
-        print("Watch: 处理来自 iPhone 的命令: \(command)")
-        
-        switch command {
-        case "startTracking":
-            print("Watch: 收到开始追踪命令")
-            startUpdates()
-            
-        case "stopTracking":
-            print("Watch: 收到停止追踪命令")
-            stopUpdates()
-            
-        default:
-            print("Watch: 未知命令: \(command)")
-        }
-    }
-    
-    private func updateConnectionStatus() {
-        isConnected = connectivitySender.isReachable
+        clickCount += 1
+        print("⌚️ Watch: 数字发送成功，点击次数: \(clickCount)")
     }
 } 
 
